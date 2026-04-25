@@ -29,33 +29,14 @@ public class ProdutoService {
     public static void listarProdutos(ArrayList<Produto> produtos) {
 
         for (Produto p : produtos) {
-            System.out.println(p.getNome());
+            System.out.printf(
+                    "Nome: %-25s | Preço: R$ %8.2f | Quantidade: %4d | Total: R$ %8.2f%n",
+                    p.getNome(),
+                    p.getPreco(),
+                    p.getQuantidade(),
+                    p.calcularTotal()
+            );
         }
-    }
-
-    // Atualizar produto
-    public static boolean atualizarProduto(ArrayList<Produto> produtos, String nomeBusca, double novoPreco, int novaQuantidade) {
-
-        Produto produto = buscarProdutoPorNome(produtos, nomeBusca);
-
-        if (produto != null) {
-            produto.setPreco(novoPreco);
-            produto.setQuantidade(novaQuantidade);
-            return true;
-        }
-        return false;
-    }
-
-    // Remover produto
-    public static boolean removerProduto(ArrayList<Produto> produtos, String nomeBusca) {
-
-        for (Produto p : produtos) {
-            if (p.getNome().equalsIgnoreCase(nomeBusca)) {
-                produtos.remove(p);
-                return true;
-            }
-        }
-        return false;
     }
 
     // Buscar produto pelo nome
@@ -69,20 +50,41 @@ public class ProdutoService {
         return null;
     }
 
-    // Exibir lista com a quantidade de produtos em estoque
-    public static void listarNomeEQuantidade(ArrayList<Produto> produtos) {
+    // Atualizar produto
+    public static boolean atualizarProduto(
+            ArrayList<Produto> produtos,
+            String nomeBusca,
+            Double novoPreco,
+            Integer novaQuantidade // Double e Integer aceitam null, double e int não aceitam
+    ) {
 
-        for (Produto p : produtos) {
-            System.out.printf("Nome: %-20s | Quantidade: %d%n", p.getNome(), p.getQuantidade());
+        Produto produto = buscarProdutoPorNome(produtos, nomeBusca);
+
+        if (produto == null) {
+            return false;
         }
+
+        if (novoPreco != null) {
+            produto.setPreco(novoPreco);
+        }
+
+        if (novaQuantidade != null) {
+            produto.setQuantidade(novaQuantidade);
+        }
+
+        return true;
     }
 
-    // Exibir lista de produtos com preço unitário
-    public static void listarProdutosEPrecoUnitario(ArrayList<Produto> produtos) {
+    // Remover produto
+    public static boolean removerProduto(ArrayList<Produto> produtos, String nomeBusca) {
 
         for (Produto p : produtos) {
-            System.out.printf("Nome: %-20s | Preço Unitario: %.2f%n", p.getNome(), p.getPreco());
+            if (p.getNome().equalsIgnoreCase(nomeBusca)) {
+                produtos.remove(p);
+                return true;
+            }
         }
+        return false;
     }
 
     // Valor total em estoque

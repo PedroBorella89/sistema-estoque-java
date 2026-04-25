@@ -14,9 +14,7 @@ public class Main {
         System.out.println("3 - Atualizar produto");
         System.out.println("4 - Remover produto");
         System.out.println("5 - Buscar produto por nome");
-        System.out.println("6 - Listar nome e quantidade");
-        System.out.println("7 - Listar nome e preço unitário");
-        System.out.println("8 - Exibir valor total em estoque");
+        System.out.println("6 - Exibir valor total em estoque");
 
         System.out.println("0 - Sair");
     }
@@ -48,7 +46,7 @@ public class Main {
             switch (opcao) {
 
                 case 1:
-                    Produto produto = ProdutoService.cadastrarProduto(sc); // cria um produto da classe 'br.com.meuprojeto.model.Produto'
+                    Produto produto = ProdutoService.cadastrarProduto(sc); // cria um produto
                     produtos.add(produto); // adiciona na lista 'produtos'
                     System.out.println("Produto cadastrado com sucesso!");
                     break;
@@ -58,17 +56,43 @@ public class Main {
                     break;
 
                 case 3:
-                    System.out.print("Digite o nome do produto: ");
+                    System.out.print("Digite o nome do produto para atualizar: ");
                     String nomeAtualizar = sc.nextLine();
 
-                    System.out.print("Digite o novo preco: ");
-                    double novoPreco = sc.nextDouble();
+                    Produto produtoEncontrado = ProdutoService.buscarProdutoPorNome(produtos, nomeAtualizar);
 
-                    System.out.print("Digite a nova quantidade: ");
-                    int novaQuantidade = sc.nextInt();
-                    sc.nextLine();
+                    if (produtoEncontrado == null) {
+                        System.out.println("Produto não encontrado.");
+                        break;
+                    }
 
-                    boolean atualizado = ProdutoService.atualizarProduto(produtos, nomeAtualizar, novoPreco, novaQuantidade);
+                    Double novoPreco = null;
+                    Integer novaQuantidade = null;
+
+                    System.out.print("Deseja atualizar o preço? (s/n): ");
+                    String alterarPreco = sc.nextLine();
+
+                    if (alterarPreco.equalsIgnoreCase("s")) {
+                        System.out.print("Digite o novo preço: ");
+                        novoPreco = sc.nextDouble();
+                        sc.nextLine();
+                    }
+
+                    System.out.print("Deseja alterar a quantidade? (s/n): ");
+                    String alterarQuantidade = sc.nextLine();
+
+                    if (alterarQuantidade.equalsIgnoreCase("s")) {
+                        System.out.print("Digite a nova quantidade: ");
+                        novaQuantidade = sc.nextInt();
+                        sc.nextLine();
+                    }
+
+                    boolean atualizado = ProdutoService.atualizarProduto(
+                            produtos,
+                            nomeAtualizar,
+                            novoPreco,
+                            novaQuantidade
+                    );
 
                     if (atualizado) {
                         System.out.println("Produto atualizado com sucesso!");
@@ -94,27 +118,19 @@ public class Main {
                     System.out.print("Digite o nome do produto: ");
                     String nomeBusca = sc.nextLine();
 
-                    Produto produtoEncontrado = ProdutoService.buscarProdutoPorNome(produtos, nomeBusca);
+                    Produto produtoBuscado = ProdutoService.buscarProdutoPorNome(produtos, nomeBusca);
 
-                    if (produtoEncontrado != null) {
+                    if (produtoBuscado != null) {
                         System.out.println("== Produto encontrado ==");
-                        System.out.println("Nome: " + produtoEncontrado.getNome());
-                        System.out.printf("Preço: R$ %.2f%n", produtoEncontrado.getPreco());
-                        System.out.println("Quantidade: " + produtoEncontrado.getQuantidade());
+                        System.out.println("Nome: " + produtoBuscado.getNome());
+                        System.out.printf("Preço: R$ %.2f%n", produtoBuscado.getPreco());
+                        System.out.println("Quantidade: " + produtoBuscado.getQuantidade());
                     } else {
                         System.out.println("Produto não encontrado.");
                     }
                     break;
 
                 case 6:
-                    ProdutoService.listarNomeEQuantidade(produtos);
-                    break;
-
-                case 7:
-                    ProdutoService.listarProdutosEPrecoUnitario(produtos);
-                    break;
-
-                case 8:
                     double total = ProdutoService.somarValorTotal(produtos);
                     System.out.printf("O valor total em estoque é: %.2f%n", total);
                     break;
